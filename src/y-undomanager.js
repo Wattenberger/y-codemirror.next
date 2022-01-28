@@ -1,9 +1,9 @@
 import * as Y from 'yjs' // eslint-disable-line
 import {
-  EditorState, StateCommand, Facet, Annotation, AnnotationType // eslint-disable-line
+  EditorState, Facet, Annotation, AnnotationType // eslint-disable-line
 } from '@codemirror/state'
 
-import { ViewPlugin, ViewUpdate, KeyBinding, EditorView } from '@codemirror/view' // eslint-disable-line
+import { ViewPlugin, ViewUpdate, EditorView } from '@codemirror/view' // eslint-disable-line
 import { ySyncFacet, ySyncAnnotation } from './y-sync.js'
 import { YRange } from './y-range.js' // eslint-disable-line
 import { createMutex } from 'lib0/mutex'
@@ -12,35 +12,35 @@ export class YUndoManagerConfig {
   /**
    * @param {Y.UndoManager} undoManager
    */
-  constructor (undoManager) {
+  constructor(undoManager) {
     this.undoManager = undoManager
   }
 
   /**
    * @param {any} origin
    */
-  addTrackedOrigin (origin) {
+  addTrackedOrigin(origin) {
     this.undoManager.trackedOrigins.add(origin)
   }
 
   /**
    * @param {any} origin
    */
-  removeTrackedOrigin (origin) {
+  removeTrackedOrigin(origin) {
     this.undoManager.trackedOrigins.delete(origin)
   }
 
   /**
    * @return {boolean} Whether a change was undone.
    */
-  undo () {
+  undo() {
     return this.undoManager.undo() != null
   }
 
   /**
    * @return {boolean} Whether a change was redone.
    */
-  redo () {
+  redo() {
     return this.undoManager.redo() != null
   }
 }
@@ -49,7 +49,7 @@ export class YUndoManagerConfig {
  * @type {Facet<YUndoManagerConfig, YUndoManagerConfig>}
  */
 export const yUndoManagerFacet = Facet.define({
-  combine (inputs) {
+  combine(inputs) {
     return inputs[inputs.length - 1]
   }
 })
@@ -66,7 +66,7 @@ class YUndoManagerPluginValue {
   /**
    * @param {EditorView} view
    */
-  constructor (view) {
+  constructor(view) {
     this.view = view
     this.conf = view.state.facet(yUndoManagerFacet)
     this.syncConf = view.state.facet(ySyncFacet)
@@ -104,14 +104,14 @@ class YUndoManagerPluginValue {
   /**
    * @param {ViewUpdate} update
    */
-  update (update) {
+  update(update) {
     if (update.selectionSet && (update.transactions.length === 0 || update.transactions[0].annotation(ySyncAnnotation) !== this.syncConf)) {
       // This only works when YUndoManagerPlugin is included before the sync plugin
       this._storeSelection()
     }
   }
 
-  destroy () {
+  destroy() {
     this.conf.undoManager.off('stack-item-added', this._onStackItemAdded)
     this.conf.undoManager.off('stack-item-popped', this._onStackItemPopped)
   }
@@ -119,13 +119,13 @@ class YUndoManagerPluginValue {
 export const yUndoManager = ViewPlugin.fromClass(YUndoManagerPluginValue)
 
 /**
- * @type {StateCommand}
+ * @type any
  */
 export const undo = ({ state, dispatch }) =>
   state.facet(yUndoManagerFacet).undo() || true
 
 /**
- * @type {StateCommand}
+ * @type any
  */
 export const redo = ({ state, dispatch }) =>
   state.facet(yUndoManagerFacet).redo() || true
@@ -143,8 +143,8 @@ export const undoDepth = state => state.facet(yUndoManagerFacet).undoManager.und
 export const redoDepth = state => state.facet(yUndoManagerFacet).undoManager.redoStack.length
 
 /**
- * Default key bindigs for the undo manager.
- * @type {Array<KeyBinding>}
+ * Default key bindings for the undo manager.
+ * @type {Array<any>}
  */
 export const yUndoManagerKeymap = [
   { key: 'Mod-z', run: undo, preventDefault: true },

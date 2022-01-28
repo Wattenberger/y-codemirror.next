@@ -1,5 +1,5 @@
 
-import { ViewPlugin, ViewUpdate, EditorView, Decoration, DecorationSet, WidgetType } from '@codemirror/view' // eslint-disable-line
+import { ViewPlugin, ViewUpdate, EditorView, Decoration, WidgetType } from '@codemirror/view' // eslint-disable-line
 
 import { RangeSet, Range } from '@codemirror/rangeset' // eslint-disable-line
 import { Annotation, AnnotationType } from '@codemirror/state' // eslint-disable-line
@@ -78,13 +78,13 @@ class YRemoteCaretWidget extends WidgetType {
    * @param {string} color
    * @param {string} name
    */
-  constructor (color, name) {
+  constructor(color, name) {
     super()
     this.color = color
     this.name = name
   }
 
-  toDOM () {
+  toDOM() {
     return /** @type {HTMLElement} */ (dom.element('span', [pair.create('class', 'cm-ySelectionCaret'), pair.create('style', `background-color: ${this.color}; border-color: ${this.color}`)], [
       dom.element('div', [
         pair.create('class', 'cm-ySelectionInfo')
@@ -94,21 +94,21 @@ class YRemoteCaretWidget extends WidgetType {
     ]))
   }
 
-  eq (widget) {
+  eq(widget) {
     return widget.color === this.color
   }
 
-  compare (widget) {
+  compare(widget) {
     return widget.color === this.color
   }
 
-  updateDOM () {
+  updateDOM() {
     return false
   }
 
-  get estimatedHeight () { return -1 }
+  get estimatedHeight() { return -1 }
 
-  ignoreEvent () {
+  ignoreEvent() {
     return true
   }
 }
@@ -117,7 +117,7 @@ export class YRemoteSelectionsPluginValue {
   /**
    * @param {EditorView} view
    */
-  constructor (view) {
+  constructor(view) {
     this.conf = view.state.facet(ySyncFacet)
     this.conf.awareness.on('change', ({ added, updated, removed }, s, t) => {
       const clients = added.concat(updated).concat(removed)
@@ -126,7 +126,7 @@ export class YRemoteSelectionsPluginValue {
       }
     })
     /**
-     * @type {DecorationSet}
+     * @type any
      */
     this.decorations = RangeSet.of([])
   }
@@ -134,7 +134,7 @@ export class YRemoteSelectionsPluginValue {
   /**
    * @param {ViewUpdate} update
    */
-  update (update) {
+  update(update) {
     const ytext = this.conf.ytext
     const ydoc = /** @type {Y.Doc} */ (ytext.doc)
     const awareness = this.conf.awareness
